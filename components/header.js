@@ -2,21 +2,43 @@ import React from 'react'
 import { StyleSheet, View, Text, Image } from 'react-native'
 import { Content, Icon } from 'native-base'
 
-const Header = (props) => {
-  return (
-    <View style={styles.headerWrapper}>
-      <Image 
-        onPress={() => props.navigate('Home')}
-        style={styles.headerLogo} 
-        source={require('../assets/mighty_jaxx_logo.png')}
-      />
-      <View style={styles.navbarRight}>
-          <Icon style={styles.icon} name='search'/>
-          <Icon onPress={() => props.navigate('Login')} style={styles.icon} name='person'/>
-          <Icon style={styles.icon} name='menu'/>
+import SearchBar from './searchBar'
+
+class Header extends React.Component {
+  constructor(props) {
+    super(props)
+  
+    this.state = {
+      showSearch: true,
+    }
+  }
+  render() {
+    return (
+      <>
+      <View style={styles.headerWrapper}>
+        <Image 
+          onPress={() => this.props.navigate('Home')}
+          style={styles.headerLogo} 
+          source={require('../assets/mighty_jaxx_logo.png')}
+        />
+        <View style={styles.navbarRight}>
+            <Icon onPress={() => this.setState({ showSearch: true })} style={styles.icon} name='search'/>
+            <Icon onPress={() => this.props.navigate('Login')} style={styles.icon} name='person'/>
+            <Icon style={styles.icon} name='menu'/>
+        </View>
       </View>
-    </View>
-  )
+      { this.state.showSearch && 
+        <SearchBar 
+          handleSearch={(q) => { 
+            this.setState({ showSearch: false })
+            // ideally, connect to redux for app state management
+            this.props.navigate('Home')
+          }}
+        /> 
+      }
+      </>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -34,9 +56,11 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     borderBottomWidth: 3,
     marginLeft: -10,
+    marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
     height: 80,
+    zIndex: 10,
   },
   navbarRight: {
     flex: 1,
@@ -51,6 +75,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
     fontSize: 24,
   }
-});
+})
 
 export default Header

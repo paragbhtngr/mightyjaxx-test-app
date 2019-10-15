@@ -84,6 +84,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     textAlign: 'center',
   }
-});
+})
 
 export default SearchResult
