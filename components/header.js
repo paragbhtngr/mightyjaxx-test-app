@@ -9,7 +9,7 @@ class Header extends React.Component {
     super(props)
   
     this.state = {
-      showSearch: true,
+      showSearch: false,
     }
   }
   render() {
