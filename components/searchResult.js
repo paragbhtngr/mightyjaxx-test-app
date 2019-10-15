@@ -1,11 +1,15 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Image } from 'react-native'
 
 const SearchResult = (props) => {
   return (
     <View style={styles.container}>
       { props.shippingStatus === "ready_to_ship" ? <View style={styles.shipBadge}><Text style={styles.shipText}>READY TO SHIP</Text></View> : 
         props.shippingStatus === "preorder" ? <View style={styles.preorderBadge}><Text style={styles.preorderText}>PREORDER</Text></View> : null }
+      <Image
+          style={styles.image}
+          source={{uri: props.img}}
+      />
       <Text style={styles.category}>{props.category}</Text>
       <Text style={styles.title}>{props.title}</Text>
       <Text style={styles.status}>{props.status}</Text>
@@ -20,9 +24,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'lightgreen',
+    // backgroundColor: 'lightgreen',
     padding: 10,
     width: '50%',
+  },
+  image: {
+    width: '100%', 
+    height: 120, 
+    resizeMode: 'contain'
   },
   category: {
     fontFamily: 'barlow-regular',
