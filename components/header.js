@@ -17,22 +17,34 @@ class Header extends React.Component {
       <>
       <View style={styles.headerWrapper}>
         <Image 
-          onPress={() => this.props.navigate('Home')}
+          onPress={() => this.props.nav.navigate('Home')}
           style={styles.headerLogo} 
           source={require('../assets/mighty_jaxx_logo.png')}
         />
         <View style={styles.navbarRight}>
-            <Icon onPress={() => this.setState({ showSearch: true })} style={styles.icon} name='search'/>
-            <Icon onPress={() => this.props.navigate('Login')} style={styles.icon} name='person'/>
+            <Icon 
+              onPress={() => {
+                this.props.nav.navigate('Home')
+                if(this.props.nav.state.routeName==='Home' && !this.state.showSearch) { this.setState({ showSearch: true }) }
+              }} 
+              style={styles.icon} 
+              name='search'
+            />
+            <Icon 
+              onPress={() => this.props.nav.navigate('Login')} 
+              style={styles.icon} 
+              name='person'
+            />
             <Icon style={styles.icon} name='menu'/>
         </View>
       </View>
       { this.state.showSearch && 
         <SearchBar 
           handleSearch={(q) => { 
-            this.setState({ showSearch: false })
-            // ideally, connect to redux for app state management
-            this.props.navigate('Home')
+            this.setState({ 
+              showSearch: false,
+            })
+            this.props.handleSearch(q)
           }}
         /> 
       }

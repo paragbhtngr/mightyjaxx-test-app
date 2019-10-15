@@ -16,7 +16,7 @@ class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.appContainer}>
-        <Header navigate={this.props.navigation.navigate}/>
+        <Header nav={this.props.navigation}/>
         <ScrollView>
           <KeyboardAvoidingView style={{ flex: 1}} behavior="position">
             <SafeAreaView style={styles.container}>

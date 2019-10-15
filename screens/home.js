@@ -9,7 +9,7 @@ class HomeScreen extends React.Component {
     super(props)
   
     this.state = {
-      query: 'xxray',  // can be managed across the app using redux
+      query: '',  // can be managed across the app using redux
       results: [{ // hardcoded for now
         img: 'https://cdn.shopify.com/s/files/1/0701/0143/products/Mighty_Jaxx_Jason_Freeny_Adventure_Time_XXRAY_BMO_1s_dd76b025-ed10-4d07-a4b1-7190917c2eea_320x.png?v=1557496197',
         category: 'XXRay',
@@ -89,30 +89,36 @@ class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.appContainer}>
-        <Header navigate={this.props.navigation.navigate}/>
+        <Header 
+          nav={this.props.navigation}
+          handleSearch={(q) => {this.setState({ query: q })}}
+        />
         <View style={styles.container}>
-          {/* <Text>Home Screen</Text>
-          <Button
-            title="Go to Login"
-            onPress={() => this.props.navigation.navigate('Login')}
-          /> */}
-
           <ScrollView>
-          <Text style={styles.searchTitle}>Search results for {this.state.query}</Text>
+          <Text style={styles.searchTitle}>{
+            this.state.query ? `Search results for ${this.state.query}` : `All products`
+          }</Text>
           <View style={styles.searchResultsContainer}>
-            { this.state.results.map((result, index) => {
-              return (
-                <SearchResult key={index}
-                  img={result.img}
-                  shippingStatus={result.shippingStatus}
-                  category={result.category}
-                  title={result.title}
-                  available={result.available}
-                  price={result.price}
-                  currency={result.currency}
-                />
+            { this.state.results.filter(r => r.title.toLowerCase().includes(this.state.query.toLowerCase())).length > 0 ? (
+                this.state.results
+                .filter(r => r.title.toLowerCase().includes(this.state.query.toLowerCase()))
+                .map((result, index) => {
+                return (
+                  <SearchResult key={index}
+                    img={result.img}
+                    shippingStatus={result.shippingStatus}
+                    category={result.category}
+                    title={result.title}
+                    available={result.available}
+                    price={result.price}
+                    currency={result.currency}
+                  />
+                )
+                })
+              ) : (
+                <Text>Sorry, no results found</Text>
               )
-            })}
+            }
           </View>
           </ScrollView>
         </View>
