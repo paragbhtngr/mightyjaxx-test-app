@@ -1,19 +1,73 @@
 import React from 'react'
 import { StyleSheet, Text, View, KeyboardAvoidingView, SafeAreaView, ScrollView } from 'react-native'
 import { Button, Input } from 'native-base'
+import { AuthSession } from 'expo'
+import * as Google from 'expo-google-app-auth'
 
 import Header from '../components/header'
+
+const FB_APP_ID = '2594099860674175'
+const GOOGLE_CLIENT_ID = '916867098436-cfveterm3j6aqtvrupql83566q7cm2u2.apps.googleusercontent.com'
+
 class LoginScreen extends React.Component {
   constructor(props) {
     super(props)
   
     this.state = {
+      signedIn: false,
       email: '',
-      password: ''
+      password: '',
+      result: '',
+    }
+  }
+
+  handleSignInFacebook = async () => {
+    // not 
+    let redirectUrl = AuthSession.getRedirectUrl();
+    let result = await AuthSession.startAsync({
+      authUrl:
+        `https://www.facebook.com/v2.8/dialog/oauth?response_type=token` +
+        `&client_id=${FB_APP_ID}` +
+        `&client_secret=${FB_APP_SECRET}` +
+        `&redirect_uri=${encodeURIComponent(redirectUrl)}`,
+    })
+    if (result.type !== 'success') {
+      console.log("error")
+      return
+    }
+    let accessToken = result.params.access_token
+    let userInfoResponse = await fetch(
+      `https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,picture.type(large)`
+    )
+    const userInfo = await userInfoResponse.json()
+    console.log("user:", user)
+    this.props.navigation.navigate('Home')
+  }
+
+  handleSignInGoogle = async () => {
+    try {
+      const {type, accessToken, user } = await Google.logInAsync({
+        androidClientId: '916867098436-70oiaigsd01s5qs7b7sf5it029b62v6a.apps.googleusercontent.com',
+        scopes: ['profile', 'email'],
+      })
+
+      if(type === 'success') {
+        console.log("user: ", user)
+        await this.setState({
+          signedIn: true,
+        })
+        this.props.navigation.navigate('Home')
+
+      } else {
+        console.log("cancelled")
+      }
+    } catch(e) {
+      console.log("error", e)
     }
   }
   
   render() {
+
     return (
       <View style={styles.appContainer}>
         <Header nav={this.props.navigation}/>
@@ -47,6 +101,19 @@ class LoginScreen extends React.Component {
                 <Button style={styles.button}>
                   <Text style={styles.buttonText}>Login</Text>
                 </Button>
+                <View style={styles.spacer}></View>
+                <Text style={styles.bodyText}> - OR - </Text>
+                <View style={styles.socialButtonWrapper}>
+                  <Button style={styles.buttonFacebook} onPress={() => this.handleSignInFacebook()}>
+                    <Text style={styles.buttonText}>Login with Facebook</Text>
+                  </Button>
+                  <Button style={styles.buttonGoogle} onPress={() => this.handleSignInGoogle()}>
+                    <Text style={styles.buttonText}>Login with Google</Text>
+                  </Button>
+                </View>
+                {this.state.result ? (
+                  <Text>{JSON.stringify(this.state.result)}</Text>
+                ) : null}
               </View>
               <View style={styles.spacer}></View>
             </SafeAreaView>
@@ -97,8 +164,23 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 20,
   },
+  socialButtonWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+  },
   button: {
     backgroundColor: 'black',
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  buttonFacebook: {
+    backgroundColor: 'darkblue',
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginRight: 20,
+  },
+  buttonGoogle: {
+    backgroundColor: 'dodgerblue',
     paddingLeft: 20,
     paddingRight: 20,
   },

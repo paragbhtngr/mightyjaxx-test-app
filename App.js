@@ -1,12 +1,13 @@
-import React from 'react';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import React from 'react'
+import { createAppContainer } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 
-import * as Font from 'expo-font';
+import * as Font from 'expo-font'
+
 
 // Import Screens
-import HomeScreen from './screens/home';
-import LoginScreen from './screens/login';
+import HomeScreen from './screens/home'
+import LoginScreen from './screens/login'
 
 const AppNavigator = createStackNavigator(
   {
@@ -14,7 +15,7 @@ const AppNavigator = createStackNavigator(
     Login: LoginScreen,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Login',
     headerMode: 'none'
   }
 );
@@ -24,13 +25,15 @@ const AppContainer = createAppContainer(AppNavigator);
 export default class App extends React.Component {
   constructor(props) {
     super(props)
-  
+
     this.state = {
-      fontLoaded: false
+      fontLoaded: false,
+      user: null,
     }
   }
   
   async componentDidMount() {
+    // Load fonts...
     await Font.loadAsync({
       'barlow-regular': require('./assets/fonts/Barlow_Condensed/BarlowCondensed-Regular.ttf'),
       'barlow-medium': require('./assets/fonts/Barlow_Condensed/BarlowCondensed-Medium.ttf'),
@@ -40,6 +43,8 @@ export default class App extends React.Component {
   }
 
   render() {
-    return this.state.fontLoaded ? <AppContainer /> : null;
+    return this.state.fontLoaded ? (
+      <AppContainer user={this.state.user}/> 
+    ) : null
   }
 }
