@@ -8,7 +8,8 @@ import * as Facebook from 'expo-facebook'
 import Header from '../components/header'
 
 const FB_APP_ID = '2594099860674175'
-const GOOGLE_CLIENT_ID = '916867098436-cfveterm3j6aqtvrupql83566q7cm2u2.apps.googleusercontent.com'
+const GOOGLE_AND_CLIENT_ID = '916867098436-cfveterm3j6aqtvrupql83566q7cm2u2.apps.googleusercontent.com'
+const GOOGLE_IOS_CLIENT_ID = '916867098436-ig4rkgqjsep7bvgg89m41teab1cb037q.apps.googleusercontent.com'
 
 class LoginScreen extends React.Component {
   constructor(props) {
@@ -48,7 +49,10 @@ class LoginScreen extends React.Component {
   handleSignInGoogle = async () => {
     try {
       const {type, accessToken, user } = await Google.logInAsync({
-        androidClientId: '916867098436-70oiaigsd01s5qs7b7sf5it029b62v6a.apps.googleusercontent.com',
+        androidClientId: GOOGLE_AND_CLIENT_ID,
+        androidStandaloneAppClientId: GOOGLE_AND_CLIENT_ID,
+        iosClientId: GOOGLE_IOS_CLIENT_ID,
+        iosStandaloneAppClientId: GOOGLE_IOS_CLIENT_ID,
         scopes: ['profile', 'email'],
       })
 
