@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, KeyboardAvoidingView, SafeAreaView, ScrollView 
 import { Button, Input } from 'native-base'
 import { AuthSession } from 'expo'
 import * as Google from 'expo-google-app-auth'
+import * as Facebook from 'expo-facebook'
 
 import Header from '../components/header'
 
@@ -22,26 +23,26 @@ class LoginScreen extends React.Component {
   }
 
   handleSignInFacebook = async () => {
-    // not 
-    let redirectUrl = AuthSession.getRedirectUrl();
-    let result = await AuthSession.startAsync({
-      authUrl:
-        `https://www.facebook.com/v2.8/dialog/oauth?response_type=token` +
-        `&client_id=${FB_APP_ID}` +
-        `&client_secret=${FB_APP_SECRET}` +
-        `&redirect_uri=${encodeURIComponent(redirectUrl)}`,
-    })
-    if (result.type !== 'success') {
-      console.log("error")
-      return
+    try {
+      const { type, token, permissions} = await Facebook.logInWithReadPermissionsAsync(FB_APP_ID, {
+        permissions: ['public_profile', 'email'],
+      })
+
+      if(type === 'success') {
+        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+        console.log("user: ", (await response.json()))
+        await this.setState({
+          signedIn: true,
+        })
+        this.props.navigation.navigate('Home')
+
+      } else {
+        console.log("cancelled")
+      }
+      
+    } catch (e) {
+      console.log("error", e)
     }
-    let accessToken = result.params.access_token
-    let userInfoResponse = await fetch(
-      `https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,picture.type(large)`
-    )
-    const userInfo = await userInfoResponse.json()
-    console.log("user:", user)
-    this.props.navigation.navigate('Home')
   }
 
   handleSignInGoogle = async () => {
@@ -103,6 +104,7 @@ class LoginScreen extends React.Component {
                 </Button>
                 <View style={styles.spacer}></View>
                 <Text style={styles.bodyText}> - OR - </Text>
+                <Text>{AuthSession.getRedirectUrl()}</Text>
                 <View style={styles.socialButtonWrapper}>
                   <Button style={styles.buttonFacebook} onPress={() => this.handleSignInFacebook()}>
                     <Text style={styles.buttonText}>Login with Facebook</Text>
