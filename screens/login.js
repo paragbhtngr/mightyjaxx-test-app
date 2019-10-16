@@ -104,7 +104,6 @@ class LoginScreen extends React.Component {
                 </Button>
                 <View style={styles.spacer}></View>
                 <Text style={styles.bodyText}> - OR - </Text>
-                <Text>{AuthSession.getRedirectUrl()}</Text>
                 <View style={styles.socialButtonWrapper}>
                   <Button style={styles.buttonFacebook} onPress={() => this.handleSignInFacebook()}>
                     <Text style={styles.buttonText}>Login with Facebook</Text>
